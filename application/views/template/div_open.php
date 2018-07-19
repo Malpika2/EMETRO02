@@ -1,0 +1,1 @@
+<div class="col-lg-<?php if(isset($columnas)){echo $columnas;}else{echo '6';}?>">
