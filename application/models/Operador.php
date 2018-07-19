@@ -8,24 +8,31 @@ class Operador extends CI_Model {
 		$this->db = $this->load->database('metrocert', TRUE); 
 	}
 	
-	public function get_all($categoria=null,$numberListItems=10){
+	public function get_all($categoria=null,$numberListItems=0,$num_rows=null){
 		
+		$this->db->select('*');
 		$this->db->from('operador');
 		if($categoria){
 				$this->db->where('categoria', $categoria);
 		}
 		$this->db->order_by('categoria', 'ASC');
-		$this->db->limit($numberListItems);
+		if ($numberListItems>0) {
+			$this->db->limit($numberListItems);
+		}
 		$query = $this->db->get();
-		return $query->result();
+		if ($num_rows!==null) {
+			return $query->num_rows(); //regresa numero de registros
+		}else{
+			return $query->result(); //regresa registros
+		}
 	}
 	
-	public function get_operador_busqueda($categoria=null,$buscar){
+	public function get_operador_busqueda($categoria=null,$buscar,$start_index=0,$limit=null){
 		
 		if($categoria=='main'){
-			$query = $this->db->query("SELECT * from operador where operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%'  order by codigo_operador asc limit 20");
+			$query = $this->db->query("SELECT * from operador where operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%'  order by codigo_operador asc limit $start_index,$limit");
 		}else{
-			$query = $this->db->query("SELECT * from operador where  (operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%') order by codigo_operador asc limit 20");
+			$query = $this->db->query("SELECT * from operador where  (operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%') order by codigo_operador asc limit $start_index,$limit");
 		}
 		return $query->result();
 	}

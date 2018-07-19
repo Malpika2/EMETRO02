@@ -49,3 +49,6 @@
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['default_controller'] = 'home/index';
+
+$route['operadores/(:num)'] = 'operadores';//cuando no sea la primera página
+$route['operadores'] = 'operadores';//cuando sea la primera página

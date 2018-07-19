@@ -8,6 +8,8 @@ class Operadores extends CI_Controller {
 		$this->load->model('operacion','operacion_model');
 		$this->load->model('operacion_producto','operacion_producto_model');
 		$this->load->helper('url_helper');
+        $this->load->library('pagination');        
+        $this->load->helper('url');
 	}
 	
 	public function registrar($categoria=null){
@@ -57,8 +59,54 @@ class Operadores extends CI_Controller {
 		
 		$this->load->model('operador','operador_model');
 		$data['categoria'] = $categoria;
-		
 		$data['mensaje'] = 0;
+
+		//paginado
+		$params = array();
+        $limit_per_page = 10;
+        $start_index = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+        // echo "<script> alert($start_index);</script>";
+        $total_records = $this->operador_model->get_all(null,0,1);
+
+        if ($total_records > 0) 
+        {
+            // get current page records
+
+            $config['base_url'] = base_url().'index.php/operadores/';
+            $config['total_rows'] = $total_records;
+            $config['per_page'] = $limit_per_page;
+            $config["uri_segment"] = 2;
+                           
+            // configurar Paginacion
+			$config['full_tag_open'] = '<table class="pagination pagination-md table-bordered table-striped">';
+			$config['full_tag_close'] = '</table>';
+			$config['num_tag_open'] = '<td class="col-md-1">';
+			$config['num_tag_close'] = '</td>';
+			$config['cur_tag_open'] = '<td class="active col-md-1"><span>';
+			$config['cur_tag_close'] = '<span></span></span></td>';
+			$config['prev_tag_open'] = '<td class="col-md-1">';
+			$config['prev_tag_close'] = '</td>';
+			$config['next_tag_open'] = '<td class="col-md-1">';
+			$config['next_tag_close'] = '</td>';
+			$config['first_link'] = '«';
+			$config['prev_link'] = '‹';
+			$config['last_link'] = '»';
+			$config['next_link'] = '›';
+			$config['first_tag_open'] = '<td class="col-md-1">';
+			$config['first_tag_close'] = '</td>';
+			$config['last_tag_open'] = '<td class="col-md-1">';
+			$config['last_tag_close'] = '</td>'; 
+
+            $this->pagination->initialize($config);
+
+            // build paging links
+            $data["links"] = $this->pagination->create_links();
+        }
+		// //fin paginado
+
+
+
+
 		if($this->input->post('guardar')){
 			if($this->guardar()){$data['mensaje']=1;}else{$data['mensaje']=2;}
 		}
@@ -104,11 +152,13 @@ class Operadores extends CI_Controller {
 		}
 		
 		if(($this->input->post('buscar') or $this->input->post('busqueda'))){
-			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
+			// $data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
+			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$start_index,$limit_per_page);
 			$data['main_active'] = 2;
 		}else{
 			$data['main_active'] = 2;
-			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
+			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$start_index,$limit_per_page);
+			// $data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
 
 			///$data['operadores'] = $this->operador_model->get_all($categoria);
 		}

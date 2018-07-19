@@ -102,4 +102,9 @@
   </tr>
   <?php }}?>
 </table>
+<div class="">
+  <?php if (isset($links)) {
+          echo $links;
+        }  ?>
+</div>
 </div>
