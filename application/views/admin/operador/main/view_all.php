@@ -41,6 +41,9 @@
 		
 	$cont++;
 	?>
+  <?php
+    $uriSegment = ($this->uri->segment(2)>0) ? 2 : 3 ;
+  ?>
   <tr>
   <td class="text-center" width="1">
     <?php if(!$categoria){$categoria='main';}?>
@@ -49,7 +52,7 @@
       <input type="hidden" name="idoperador" value="<?php echo $operador->idoperador;?>" />
       </form>
     </td>
-  	<td><?php echo $cont;?></td>
+  	<td><?php echo $cont+$this->uri->segment($uriSegment);?></td>
     <td>
     	<?php echo $operador->codigo_operador;?>
     </td>

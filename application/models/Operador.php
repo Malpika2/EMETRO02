@@ -27,14 +27,16 @@ class Operador extends CI_Model {
 		}
 	}
 	
-	public function get_operador_busqueda($categoria=null,$buscar,$start_index=0,$limit=null){
-		
+	public function get_operador_busqueda($categoria=null,$buscar='',$start_index=0,$limit=null,$num_rows=null){
 		if($categoria=='main'){
-			$query = $this->db->query("SELECT * from operador where operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%'  order by codigo_operador asc limit $start_index,$limit");
+			$query = $this->db->query("SELECT * from operador where operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%'  order by codigo_operador asc limit $start_index ,$limit");
 		}else{
-			$query = $this->db->query("SELECT * from operador where  (operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%') order by codigo_operador asc limit $start_index,$limit");
-		}
-		return $query->result();
+			$query = $this->db->query("SELECT * from operador where  operador like '%".$buscar."%' or representante_legal like '%".$buscar."%' or codigo_operador like '%".$buscar."%' order by codigo_operador asc limit $start_index ,$limit");
+		}if ($num_rows!==null) {
+			return $query->num_rows();
+		}else{
+			return $query->result();
+			}
 	}
 	
 	public function get_operador_sync(){

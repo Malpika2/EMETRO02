@@ -32,13 +32,20 @@
 
   <form action="<?php echo site_url('/operadores/consultar/');?>" method="post">
   <div class="col-lg-3">
-  <input class="form-control" type="text" name="buscar" placeholder="Escribe aquí" />
+  <input class="form-control" type="text" id="buscar" name="buscar" placeholder="Escribe aquí" value="<?php if(isset($_SESSION['buscar'])){echo $_SESSION['buscar'];} ?>" />
   </div>
   <div class="col-lg-3">
-  <input class="btn btn-primary" type="submit" name="busqueda" value="Buscar" />
+  <input class="btn btn-primary" type="submit" id="busqueda" name="busqueda" value="Buscar" />
+  <button class="btn btn-primary" onclick="resetBusqueda();">Borrar busqueda</button>
   </div>
   </form>
+
 <hr />
 </div>
-
+<script type="text/javascript">
+	resetBusqueda= function(){
+		$('#buscar').val(' ');
+		// $('#busqueda').click();
+	}
+</script>
 

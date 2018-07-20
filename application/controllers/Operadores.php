@@ -10,6 +10,8 @@ class Operadores extends CI_Controller {
 		$this->load->helper('url_helper');
         $this->load->library('pagination');        
         $this->load->helper('url');
+        $this->load->library('session');
+
 	}
 	
 	public function registrar($categoria=null){
@@ -64,9 +66,26 @@ class Operadores extends CI_Controller {
 		//paginado
 		$params = array();
         $limit_per_page = 10;
-        $start_index = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+        if (is_numeric($this->uri->segment(2))) {
+        	$uriSegment = 2;	
+        }else{
+        	$uriSegment = 3;	
+        }
+        $start_index = ($this->uri->segment($uriSegment)) ? $this->uri->segment($uriSegment) : 0;
         // echo "<script> alert($start_index);</script>";
-        $total_records = $this->operador_model->get_all(null,0,1);
+        if($this->input->post('buscar')){
+			$total_records = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),0,10000,1);
+			$this->session->set_userdata('buscar',$this->input->post('buscar'));
+			$buscar = $_SESSION['buscar'];
+        }elseif(isset($_SESSION['buscar'])){
+        	$buscar = $_SESSION['buscar'];
+        	$total_records = $this->operador_model->get_operador_busqueda($categoria,$buscar,0,10000,1);
+        }
+        else{
+        	$buscar=null;
+        	$total_records = $this->operador_model->get_all(null,0,1);	
+        }
+        
 
         if ($total_records > 0) 
         {
@@ -75,7 +94,7 @@ class Operadores extends CI_Controller {
             $config['base_url'] = base_url().'index.php/operadores/';
             $config['total_rows'] = $total_records;
             $config['per_page'] = $limit_per_page;
-            $config["uri_segment"] = 2;
+            $config["uri_segment"] = $uriSegment;
                            
             // configurar Paginacion
 			$config['full_tag_open'] = '<table class="pagination pagination-md table-bordered table-striped">';
@@ -153,11 +172,11 @@ class Operadores extends CI_Controller {
 		
 		if(($this->input->post('buscar') or $this->input->post('busqueda'))){
 			// $data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
-			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$start_index,$limit_per_page);
+			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$buscar,$start_index,$limit_per_page);
 			$data['main_active'] = 2;
 		}else{
 			$data['main_active'] = 2;
-			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$start_index,$limit_per_page);
+			$data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$buscar,$start_index,$limit_per_page);
 			// $data['operadores'] = $this->operador_model->get_operador_busqueda($categoria,$this->input->post('buscar'),$this->input->post('limite'));
 
 			///$data['operadores'] = $this->operador_model->get_all($categoria);
